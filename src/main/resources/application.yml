@@ -21,6 +21,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
-
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
 
 

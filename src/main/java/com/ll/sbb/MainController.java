@@ -11,6 +11,6 @@ public class MainController {
     @ResponseBody
     public String index(){
         System.out.println("index");
-        return "hello";
+        return "안녕하세요 sbb에 오신것을 환영합니다";
     }
 }

@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,6 +26,6 @@ public class Question {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     private List<Answer> answerList;
 }

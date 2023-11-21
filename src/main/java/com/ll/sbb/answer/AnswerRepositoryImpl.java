@@ -1,4 +1,4 @@
-package com.ll.sbb;
+package com.ll.sbb.answer;
 
 public class AnswerRepositoryImpl implements AnswerRepositoryCustom{
 }

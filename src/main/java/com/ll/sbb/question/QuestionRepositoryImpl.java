@@ -1,14 +1,10 @@
-package com.ll.sbb;
+package com.ll.sbb.question;
+import com.ll.sbb.QQuestion;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.parser.Entity;
-
 import java.util.List;
-
-import static com.ll.sbb.QQuestion.*;
 
 
 @Repository

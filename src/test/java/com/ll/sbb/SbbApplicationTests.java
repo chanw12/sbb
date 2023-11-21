@@ -1,20 +1,18 @@
 package com.ll.sbb;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ll.sbb.answer.Answer;
+import com.ll.sbb.answer.AnswerRepository;
+import com.ll.sbb.question.Question;
+import com.ll.sbb.question.QuestionRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-import org.aspectj.lang.annotation.Before;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,5 +1,5 @@
 package com.ll.sbb.question;
-import com.ll.sbb.QQuestion;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;

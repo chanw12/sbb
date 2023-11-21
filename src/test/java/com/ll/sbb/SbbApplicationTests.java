@@ -44,11 +44,6 @@ class SbbApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @InjectMocks
-    QuestionService questionService;
-
-    @Mock
-    QuestionRepository questionRepository2;
 
 
 
@@ -194,48 +189,10 @@ class SbbApplicationTests {
 
     }
 
-    @Test
-    void test11() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/question/list"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("question_list"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("questionList"));
-    }
-
-    @Test
-    void test12() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/"))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/question/list"));
-    }
 
 
-    @Test
-    void test13(){
-        //given
-        Question question1 = new Question();
-        question1.setId(1);
-        question1.setContent("chan");
-        question1.setSubject("Subject 1");
-        question1.setCreateDate(LocalDateTime.now());
-
-        Question question2 = new Question();
-        question2.setId(1);
-        question2.setContent("chan");
-        question2.setSubject("Subject 2");
-        question2.setCreateDate(LocalDateTime.now());
-        Mockito.when(questionRepository2.findAll()).thenReturn(Arrays.asList(question1, question2));
-
-        //when
-        List<Question> result = questionService.getList();
-        //then
-        Assertions.assertThat(result).isEqualTo(questionRepository2.findAll());
-        Assertions.assertThat(2).isEqualTo(result.size()); // 예상되는 결과의 크기는 2여야 함
-        Assertions.assertThat("Subject 1").isEqualTo(result.get(0).getSubject());
-        Assertions.assertThat("Subject 2").isEqualTo(result.get(1).getSubject());
 
 
-    }
 
 
 

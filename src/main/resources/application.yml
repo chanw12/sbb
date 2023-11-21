@@ -9,8 +9,8 @@ spring:
       path: /h2-console
   datasource:
     driver-class-name: org.h2.Driver
-#    url: jdbc:h2:tcp://localhost/~/sbb-mission
-    url: jdbc:h2:mem:test
+    url: jdbc:h2:tcp://localhost/~/sbb-mission
+#    url: jdbc:h2:mem:test
     username: sa
     password:
   jpa:

@@ -4,10 +4,14 @@ import com.ll.sbb.answer.Answer;
 import com.ll.sbb.answer.AnswerRepository;
 import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionRepository;
+import com.ll.sbb.question.QuestionService;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +43,16 @@ class SbbApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @InjectMocks
+    QuestionService questionService;
+
+    @Mock
+    QuestionRepository questionRepository2;
+
+
+
+
 
 
 
@@ -191,6 +207,34 @@ class SbbApplicationTests {
         mockMvc.perform(MockMvcRequestBuilders.get("/"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/question/list"));
+    }
+
+
+    @Test
+    void test13(){
+        //given
+        Question question1 = new Question();
+        question1.setId(1);
+        question1.setContent("chan");
+        question1.setSubject("Subject 1");
+        question1.setCreateDate(LocalDateTime.now());
+
+        Question question2 = new Question();
+        question2.setId(1);
+        question2.setContent("chan");
+        question2.setSubject("Subject 2");
+        question2.setCreateDate(LocalDateTime.now());
+        Mockito.when(questionRepository2.findAll()).thenReturn(Arrays.asList(question1, question2));
+
+        //when
+        List<Question> result = questionService.getList();
+        //then
+        Assertions.assertThat(result).isEqualTo(questionRepository2.findAll());
+        Assertions.assertThat(2).isEqualTo(result.size()); // 예상되는 결과의 크기는 2여야 함
+        Assertions.assertThat("Subject 1").isEqualTo(result.get(0).getSubject());
+        Assertions.assertThat("Subject 2").isEqualTo(result.get(1).getSubject());
+
+
     }
 
 

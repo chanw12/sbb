@@ -29,7 +29,6 @@ import java.util.Optional;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@AutoConfigureMockMvc
 class SbbApplicationTests {
     @Autowired
     EntityManager em;
@@ -39,18 +38,6 @@ class SbbApplicationTests {
 
     @Autowired
     AnswerRepository answerRepository;
-
-
-    @Autowired
-    private MockMvc mockMvc;
-
-
-
-
-
-
-
-
 
     @BeforeEach
     void setUp(){
@@ -71,7 +58,6 @@ class SbbApplicationTests {
         a.setQuestion(q2);  // 어떤 질문의 답변인지 알기위해서 Question 객체가 필요하다.
         a.setCreateDate(LocalDateTime.now());
         this.answerRepository.save(a);
-        System.out.println(q2.getAnswerList());
 
     }
 

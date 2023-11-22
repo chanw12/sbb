@@ -4,6 +4,7 @@ package com.ll.sbb.question;
 import com.ll.sbb.global.exception.DataNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -80,6 +81,24 @@ class QuestionServiceTest {
         when(questionRepository.findById(any())).thenReturn(Optional.empty());
         org.junit.jupiter.api.Assertions.assertThrows(DataNotFoundException.class,()-> questionService.getQuestion(2));
         verify(questionRepository, times(1)).findById(eq(2));
+    }
+
+    @Test
+    void test4(){
+        String subject = "This is question subject";
+        String content = "This is question content";
+
+        questionService.create(subject,content);
+
+        ArgumentCaptor<Question> argumentCaptor =  ArgumentCaptor.forClass(Question.class);
+
+        verify(questionRepository,times(1)).save(argumentCaptor.capture());
+
+        Question question = argumentCaptor.getValue();
+        Assertions.assertThat(question.getSubject()).isEqualTo(subject);
+        Assertions.assertThat(question.getContent()).isEqualTo(content);
+        org.junit.jupiter.api.Assertions.assertNotNull(question.getCreateDate());
+
     }
 
 

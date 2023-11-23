@@ -2,6 +2,10 @@ package com.ll.sbb.question;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,6 +28,8 @@ public class QuestionRepositoryImpl  implements QuestionRepositoryCustom{
                 .where(question.content.contains(content)).fetchOne();
 
     }
+
+
 
     @Override
     public Question findBySubject(String subject) {
@@ -48,4 +54,27 @@ public class QuestionRepositoryImpl  implements QuestionRepositoryCustom{
                 .fetch();
 
     }
+
+
+    @Override
+    public Page<Question> findAll(Pageable pageable) {
+        QQuestion question = QQuestion.question;
+        List<Question> questions = this.jpaQueryFactory
+                .selectFrom(question)
+                .offset(pageable.getOffset())
+                .orderBy(question.createDate.desc())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long totalCount = this.jpaQueryFactory
+                .selectFrom(question)
+                .fetch().size();
+        System.out.println(totalCount);
+        return new PageImpl<>(questions, pageable, totalCount);
+
+    }
+
+
+
+
 }

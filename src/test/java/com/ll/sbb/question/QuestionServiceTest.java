@@ -10,8 +10,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -101,5 +106,26 @@ class QuestionServiceTest {
 
     }
 
+    @Test
+    void getList() {
+        Pageable pageable = PageRequest.of(0,10);
+        List<Question> questions = new ArrayList<>();
+        Question question = new Question();
+        question.setId(1);
+        question.setContent("123");
+        question.setSubject("12333");
+        question.setCreateDate(LocalDateTime.now());
 
+        questions.add(question);
+
+        when(questionRepository.findAll(pageable)).thenReturn(new PageImpl<Question>(questions,pageable,1));
+        Page<Question> page = questionService.getList(0);
+        Assertions.assertThat(page.toList().get(0).getId()).isEqualTo(question.getId());
+        Assertions.assertThat(page.toList().get(0).getSubject()).isEqualTo(question.getSubject());
+        Assertions.assertThat(page.toList().get(0).getContent()).isEqualTo(question.getContent());
+        Assertions.assertThat(page.toList().get(0).getCreateDate()).isEqualTo(question.getCreateDate());
+        verify(questionRepository,times(1)).findAll(pageable);
+
+
+    }
 }

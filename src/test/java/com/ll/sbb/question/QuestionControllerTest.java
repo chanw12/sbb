@@ -1,6 +1,7 @@
 package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,11 +13,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,13 +37,13 @@ class QuestionControllerTest {
 
     @MockBean
     QuestionService questionService;
-    @Test
-    void test11() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/question/list"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("question_list"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("questionList"));
-    }
+//    @Test
+//    void test11() throws Exception {
+//        mockMvc.perform(MockMvcRequestBuilders.get("/question/list"))
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.view().name("question_list"))
+//                .andExpect(MockMvcResultMatchers.model().attributeExists("questionList"));
+//    }
 
 //    @Test
 //    void test12() throws Exception {
@@ -101,6 +107,21 @@ class QuestionControllerTest {
     }
 
 
+    @Test
+    @DisplayName("list뷰로 페이징 전달하기")
+    void test3() throws Exception {
+        Pageable pageable = PageRequest.of(0,10);
+        List<Question> questions = new ArrayList<>();
+        PageImpl<Question> page = new PageImpl<>(questions, pageable, 1);
+        when(questionService.getList(0)).thenReturn(page);
 
+        mockMvc.perform(MockMvcRequestBuilders.get("/question/list").param("page","0"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("question_list"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("paging"));
+
+
+        verify(questionService, times(1)).getList(0);
+    }
 
 }

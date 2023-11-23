@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -58,9 +59,11 @@ class QuestionControllerTest {
         Question mockQuestion = new Question();
         mockQuestion.setId(questionId);
         mockQuestion.setSubject("Test Subject");
-
+        mockQuestion.setAnswerList(new ArrayList<>());
         // questionService의 getQuestion 메서드가 호출될 때 가상의 Question을 반환하도록 설정
         when(questionService.getQuestion(questionId)).thenReturn(mockQuestion);
+
+
 
         // MockMvc를 사용하여 GET 요청을 보냄
         mockMvc.perform(MockMvcRequestBuilders.get("/question/detail/{id}", questionId))

@@ -1,14 +1,18 @@
 package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
+import com.ll.sbb.user.SiteUser;
+import com.ll.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequestMapping("/question")
@@ -16,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionController {
     private final QuestionService questionService;
+    private final UserService userService;
 //    @GetMapping("/list")
 //    public String list(Model model){
 //        List<Question> questionList = this.questionService.getList();
@@ -35,17 +40,22 @@ public class QuestionController {
         return "question_detail";
     }
 
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create(QuestionForm questionForm){
         return "question_form";
     }
 
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult) {
+    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult, Principal principal) {
         if(bindingResult.hasErrors()){
             return "question_form";
         }
-        questionService.create(questionForm.getSubject(),questionForm.getContent());
+        SiteUser siteUser = this.userService.getUser(principal.getName());
+        questionService.create(questionForm.getSubject(),questionForm.getContent(),siteUser);
         return "redirect:/question/list"; // 질문 저장후 질문목록으로 이동
     }
 

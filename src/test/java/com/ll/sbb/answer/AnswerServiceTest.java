@@ -3,6 +3,7 @@ package com.ll.sbb.answer;
 import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionRepository;
 import com.ll.sbb.question.QuestionService;
+import com.ll.sbb.user.SiteUser;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -30,7 +31,7 @@ class AnswerServiceTest {
     void create() {
         Question question = new Question();
         String answerContent = "This is an answer content";
-        answerService.create(question, answerContent);
+        answerService.create(question, answerContent,new SiteUser());
 
 
         ArgumentCaptor<Answer> answerCaptor = ArgumentCaptor.forClass(Answer.class);

@@ -2,6 +2,7 @@ package com.ll.sbb.question;
 
 
 import com.ll.sbb.global.exception.DataNotFoundException;
+import com.ll.sbb.user.SiteUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -95,7 +96,7 @@ class QuestionServiceTest {
         String subject = "This is question subject";
         String content = "This is question content";
 
-        questionService.create(subject,content);
+        questionService.create(subject,content,new SiteUser());
 
         ArgumentCaptor<Question> argumentCaptor =  ArgumentCaptor.forClass(Question.class);
 

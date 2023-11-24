@@ -1,6 +1,8 @@
 package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
+import com.ll.sbb.user.SiteUser;
+import org.apache.catalina.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -77,8 +81,10 @@ class QuestionControllerTest {
 
     @Test
     @DisplayName("/question/create으로 get요청이 가면 question_form뷰 페이지 보여주기")
+    @WithMockUser(username = "chan",password = "1234",roles = "USER")
     void test() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/question/create"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/question/create").with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(SecurityMockMvcRequestPostProcessors.user("chan").password("1234").roles("USER")))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("question_form"));
 
@@ -86,22 +92,25 @@ class QuestionControllerTest {
 
     @Test
     @DisplayName("/question/create으로 post요청시 질문 등록 요청 처리")
+    @WithMockUser(username = "chan",password = "1234",roles = "USER")
     void test1() throws Exception{
         String subject = "This is question subject";
         String content = "This is question content";
-        mockMvc.perform(MockMvcRequestBuilders.post("/question/create").param("subject",subject).param("content",content))
+        mockMvc.perform(MockMvcRequestBuilders.post("/question/create").param("subject",subject).param("content",content)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/question/list"));
-        verify(questionService,times(1)).create(eq(subject),eq(content));
+        verify(questionService,times(1)).create(eq(subject),eq(content),any(SiteUser.class));
     }
 
     @Test
     @DisplayName("/question/create으로 post요청시 질문 등록 요청이 올바르지 않을경우")
+    @WithMockUser(username = "chan",password = "1234",roles = "USER")
     void test2() throws Exception{
         QuestionForm questionForm = new QuestionForm();
         questionForm.setSubject("Test Subject");
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/question/create").flashAttr("questionForm",questionForm))
+        mockMvc.perform(MockMvcRequestBuilders.post("/question/create").flashAttr("questionForm",questionForm).with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isOk()) // 반환된 HTTP 상태 코드 확인
                 .andExpect(MockMvcResultMatchers.view().name("question_form"))
                 .andExpect(MockMvcResultMatchers.model().hasErrors())

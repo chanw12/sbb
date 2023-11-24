@@ -4,6 +4,7 @@ package com.ll.sbb.question;
 import com.ll.sbb.global.exception.DataNotFoundException;
 import com.ll.sbb.user.SiteUser;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -130,5 +131,37 @@ class QuestionServiceTest {
         verify(questionRepository,times(1)).findAll(pageable);
 
 
+    }
+
+    @Test
+    @DisplayName("질문수정 서비스 확인")
+    void modify(){
+        Question question = new Question();
+        String modiSubject = "is modified subject";
+        String modiContent = "is modified content";
+
+        ArgumentCaptor<Question> argumentCaptor = ArgumentCaptor.forClass(Question.class);
+
+        questionService.modify(question,modiSubject,modiContent);
+        verify(questionRepository,times(1)).save(argumentCaptor.capture());
+        Question capturequestion = argumentCaptor.getValue();
+
+        Assertions.assertThat(capturequestion.getContent()).isEqualTo(modiContent);
+        Assertions.assertThat(capturequestion.getSubject()).isEqualTo(modiSubject);
+    }
+
+    @Test
+    @DisplayName("질문 삭제 서비스 확인")
+    void delete(){
+        Question questionToDelete = new Question();
+        questionToDelete.setId(1);
+
+        // When
+        doNothing().when(questionRepository).delete(questionToDelete);
+        questionService.delete(questionToDelete);
+
+        // Then
+        verify(questionRepository, times(1)).delete(questionToDelete);
+        verifyNoMoreInteractions(questionRepository);
     }
 }

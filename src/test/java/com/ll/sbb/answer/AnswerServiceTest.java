@@ -4,6 +4,7 @@ import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionRepository;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
+import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -22,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 class AnswerServiceTest {
 
     @InjectMocks

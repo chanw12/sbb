@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
-//@ActiveProfiles('test')
+@ActiveProfiles("test")
 class QuestionServiceTest {
     @InjectMocks
     QuestionService questionService;

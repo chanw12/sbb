@@ -4,10 +4,12 @@ import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
+import jakarta.transaction.Transactional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -26,6 +29,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
 public class AnswerControllerTest {
 
     @Autowired
@@ -33,6 +38,8 @@ public class AnswerControllerTest {
     @MockBean
     AnswerService answerService;
 
+    @MockBean
+    QuestionService questionService;
 
     @MockBean
     UserService userService;
@@ -46,9 +53,14 @@ public class AnswerControllerTest {
     @WithMockUser(username = "chan", password = "1234", roles = "USER")
     void test1() throws Exception{
         Integer questionId = 1;
+        Question question= new Question();
+        question.setId(questionId);
+        SiteUser siteUser = new SiteUser();
         String content = "This is an answer content";
-
-        when(answerService.getAnswer(questionId)).thenReturn(new Answer());
+        Principal principal = Mockito.mock(Principal.class);
+        when(principal.getName()).thenReturn("chan");
+        when(userService.getUser(principal.getName())).thenReturn(siteUser);
+        when(questionService.getQuestion(questionId)).thenReturn(question);
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/create/{id}",questionId).param("content",content).with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",questionId)));

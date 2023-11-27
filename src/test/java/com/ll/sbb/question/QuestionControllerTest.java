@@ -3,11 +3,11 @@ package com.ll.sbb.question;
 import com.ll.sbb.answer.AnswerForm;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
+import jakarta.transaction.Transactional;
 import org.apache.catalina.User;
+import org.aspectj.lang.annotation.Before;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -25,6 +25,7 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.MvcResult;
@@ -45,6 +46,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Transactional
 class QuestionControllerTest {
 
     @Autowired
@@ -55,6 +58,10 @@ class QuestionControllerTest {
 
     @MockBean
     QuestionService questionService;
+    @BeforeEach
+    void settup(){
+        userService.create("chan","wooju3434@naver.com","1234");
+    }
 //    @Test
 //    void test11() throws Exception {
 //        mockMvc.perform(MockMvcRequestBuilders.get("/question/list"))
@@ -77,6 +84,7 @@ class QuestionControllerTest {
         mockQuestion.setId(questionId);
         mockQuestion.setSubject("Test Subject");
         mockQuestion.setAnswerList(new ArrayList<>());
+        mockQuestion.setVoter(new HashSet<>());
         // questionService의 getQuestion 메서드가 호출될 때 가상의 Question을 반환하도록 설정
         when(questionService.getQuestion(questionId)).thenReturn(mockQuestion);
 
@@ -109,6 +117,11 @@ class QuestionControllerTest {
     void test1() throws Exception{
         String subject = "This is question subject";
         String content = "This is question content";
+        SiteUser siteUser = new SiteUser();
+        Principal principal = Mockito.mock(Principal.class);
+        Mockito.when(principal.getName()).thenReturn("chan");
+        Mockito.when(userService.getUser(principal.getName())).thenReturn(siteUser);
+
         mockMvc.perform(MockMvcRequestBuilders.post("/question/create").param("subject",subject).param("content",content)
                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())

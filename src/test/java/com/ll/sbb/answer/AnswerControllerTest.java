@@ -58,12 +58,18 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         String content = "This is an answer content";
         Principal principal = Mockito.mock(Principal.class);
+        Answer answer = new Answer();
+        answer.setQuestion(question);
+        answer.setId(1);
+
         when(principal.getName()).thenReturn("chan");
         when(userService.getUser(principal.getName())).thenReturn(siteUser);
         when(questionService.getQuestion(questionId)).thenReturn(question);
+
+        when(answerService.create(question,content,siteUser)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/create/{id}",questionId).param("content",content).with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",questionId)));
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s#answer_%s",answer.getQuestion().getId(),answer.getId())));
 
         verify(answerService,times(1)).create(any(Question.class),eq(content),any(SiteUser.class));
 
@@ -91,7 +97,7 @@ public class AnswerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/modify/{id}",1).param("content",content)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",answer.getQuestion().getId())));
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s#answer_%s",answer.getQuestion().getId(),answer.getId())));
         verify(answerService,times(1)).modify(eq(answer),eq(content));
 
     }
@@ -156,7 +162,7 @@ public class AnswerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/answer/delete/{id}",1)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",answer.getQuestion().getId())));
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s#answer_%s",answer.getQuestion().getId(),answer.getId())));
         verify(answerService,times(1)).delete(eq(answer));
 
     }
@@ -187,16 +193,16 @@ public class AnswerControllerTest {
         Question question = new Question();
         question.setId(1);
         answer.setQuestion(question);
-
+        answer.setId(1);
         SiteUser siteUser = new SiteUser();
         Principal principal = Mockito.mock(Principal.class);
         Mockito.when(principal.getName()).thenReturn("chan");
         Mockito.when(answerService.getAnswer(1)).thenReturn(answer);
         Mockito.when(userService.getUser(principal.getName())).thenReturn(siteUser);
-        mockMvc.perform(MockMvcRequestBuilders.post("/answer/vote/{id}",1).principal(principal)
+        mockMvc.perform(MockMvcRequestBuilders.get("/answer/vote/{id}",1).principal(principal)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",answer.getQuestion().getId())));
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s#answer_%s",answer.getQuestion().getId(),answer.getId())));
         verify(answerService,times(1)).vote(answer,siteUser);
     }
 }

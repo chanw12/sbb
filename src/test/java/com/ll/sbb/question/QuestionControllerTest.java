@@ -313,7 +313,7 @@ class QuestionControllerTest {
         Mockito.when(principal.getName()).thenReturn("chan");
         Mockito.when(questionService.getQuestion(1)).thenReturn(question);
         Mockito.when(userService.getUser(principal.getName())).thenReturn(siteUser);
-        mockMvc.perform(MockMvcRequestBuilders.post("/question/vote/{id}",1).principal(principal)
+        mockMvc.perform(MockMvcRequestBuilders.get("/question/vote/{id}",1).principal(principal)
                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",1)));

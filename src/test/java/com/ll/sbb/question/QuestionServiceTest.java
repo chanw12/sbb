@@ -19,10 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -163,5 +160,27 @@ class QuestionServiceTest {
         // Then
         verify(questionRepository, times(1)).delete(questionToDelete);
         verifyNoMoreInteractions(questionRepository);
+    }
+
+    @Test
+    @DisplayName("추천 시스템")
+    void vote(){
+
+        Question question = new Question();
+        question.setVoter(new HashSet<SiteUser>());
+        SiteUser siteUser = new SiteUser();
+        siteUser.setUsername("chan");
+        question.getVoter().add(siteUser);
+
+
+        ArgumentCaptor<Question> argumentCaptor2 = ArgumentCaptor.forClass(Question.class);
+
+        questionService.vote(question,siteUser);
+
+        verify(questionRepository,times(1)).save(argumentCaptor2.capture());
+        Question value = argumentCaptor2.getValue();
+        Assertions.assertThat(value.getVoter().stream().findFirst().get()).isEqualTo(siteUser);
+
+
     }
 }

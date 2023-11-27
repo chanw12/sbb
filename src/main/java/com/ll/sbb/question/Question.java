@@ -10,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -36,5 +37,9 @@ public class Question {
 
     @LastModifiedDate
     private LocalDateTime modifyDate;
+
+    @ManyToMany
+    Set<SiteUser> voter;
+
 
 }

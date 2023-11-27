@@ -4,6 +4,7 @@ import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionRepository;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,5 +98,27 @@ class AnswerServiceTest {
         verifyNoMoreInteractions(answerRepository);
     }
 
+
+    @Test
+    @DisplayName("추천 시스템")
+    void vote(){
+
+        Answer answer = new Answer();
+        answer.setVoter(new HashSet<SiteUser>());
+        SiteUser siteUser = new SiteUser();
+        siteUser.setUsername("chan");
+        answer.getVoter().add(siteUser);
+
+
+        ArgumentCaptor<Answer> argumentCaptor2 = ArgumentCaptor.forClass(Answer.class);
+
+        answerService.vote(answer,siteUser);
+
+        verify(answerRepository,times(1)).save(argumentCaptor2.capture());
+        Answer value = argumentCaptor2.getValue();
+        Assertions.assertThat(value.getVoter().stream().findFirst().get()).isEqualTo(siteUser);
+
+
+    }
 
 }

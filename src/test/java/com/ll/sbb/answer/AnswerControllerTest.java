@@ -3,6 +3,7 @@ package com.ll.sbb.answer;
 import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
+import com.ll.sbb.user.UserService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.security.Principal;
+
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -30,8 +33,10 @@ public class AnswerControllerTest {
     @MockBean
     AnswerService answerService;
 
+
     @MockBean
-    QuestionService questionService;
+    UserService userService;
+
 
     @InjectMocks
     AnswerController answerController;
@@ -43,7 +48,7 @@ public class AnswerControllerTest {
         Integer questionId = 1;
         String content = "This is an answer content";
 
-        when(questionService.getQuestion(questionId)).thenReturn(new Question());
+        when(answerService.getAnswer(questionId)).thenReturn(new Answer());
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/create/{id}",questionId).param("content",content).with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",questionId)));
@@ -160,5 +165,26 @@ public class AnswerControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/answer/delete/{id}",1)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("/answer/vote/{id}로 요청시 추천 증가 ")
+    @WithMockUser(username = "chan",password = "1234",roles = "USER")
+    void vote() throws Exception{
+        Answer answer = new Answer();
+        Question question = new Question();
+        question.setId(1);
+        answer.setQuestion(question);
+
+        SiteUser siteUser = new SiteUser();
+        Principal principal = Mockito.mock(Principal.class);
+        Mockito.when(principal.getName()).thenReturn("chan");
+        Mockito.when(answerService.getAnswer(1)).thenReturn(answer);
+        Mockito.when(userService.getUser(principal.getName())).thenReturn(siteUser);
+        mockMvc.perform(MockMvcRequestBuilders.post("/answer/vote/{id}",1).principal(principal)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",answer.getQuestion().getId())));
+        verify(answerService,times(1)).vote(answer,siteUser);
     }
 }

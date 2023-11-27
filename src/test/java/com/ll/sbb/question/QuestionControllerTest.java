@@ -2,6 +2,7 @@ package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
 import com.ll.sbb.user.SiteUser;
+import com.ll.sbb.user.UserService;
 import org.apache.catalina.User;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
@@ -32,8 +33,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,6 +49,9 @@ class QuestionControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    UserService userService;
 
     @MockBean
     QuestionService questionService;
@@ -282,6 +288,23 @@ class QuestionControllerTest {
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
+    }
+
+    @Test
+    @DisplayName("/question/vote/{id}로 요청시 추천 증가 ")
+    @WithMockUser(username = "chan",password = "1234",roles = "USER")
+    void vote() throws Exception{
+        Question question = new Question();
+        SiteUser siteUser = new SiteUser();
+        Principal principal = Mockito.mock(Principal.class);
+        Mockito.when(principal.getName()).thenReturn("chan");
+        Mockito.when(questionService.getQuestion(1)).thenReturn(question);
+        Mockito.when(userService.getUser(principal.getName())).thenReturn(siteUser);
+        mockMvc.perform(MockMvcRequestBuilders.post("/question/vote/{id}",1).principal(principal)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl(String.format("/question/detail/%s",1)));
+        verify(questionService,times(1)).vote(question,siteUser);
     }
 
 }

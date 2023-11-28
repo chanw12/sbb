@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -69,12 +70,31 @@ public class QuestionRepositoryImpl  implements QuestionRepositoryCustom{
         long totalCount = this.jpaQueryFactory
                 .selectFrom(question)
                 .fetch().size();
-        System.out.println(totalCount);
         return new PageImpl<>(questions, pageable, totalCount);
 
     }
 
+    @Override
+    public Page<Question> findAllByKeyword(String kw, Pageable pageable) {
+        QQuestion question = QQuestion.question;
+        List<Question> questions = this.jpaQueryFactory
+                .selectFrom(QQuestion.question)
+                .where(
+                        QQuestion.question.subject.like("%" + kw + "%")
+                                .or(QQuestion.question.content.like("%" + kw + "%"))
+                )
+                .offset(pageable.getOffset())
+                .orderBy(question.createDate.desc())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-
-
+        long totalCount = this.jpaQueryFactory
+                .selectFrom(question)
+                .where(
+                        QQuestion.question.subject.like("%" + kw + "%")
+                                .or(QQuestion.question.content.like("%" + kw + "%"))
+                )
+                .fetch().size();
+        return new PageImpl<>(questions,pageable,totalCount);
+    }
 }

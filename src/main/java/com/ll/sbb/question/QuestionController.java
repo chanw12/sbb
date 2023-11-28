@@ -5,11 +5,14 @@ import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.codehaus.groovy.util.StringUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -62,8 +65,13 @@ public class QuestionController {
     }
 
     @GetMapping("/list")
-    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page){
-        Page<Question> paging = this.questionService.getList(page);
+    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page,@RequestParam(value = "kw",defaultValue = "") String kw){
+        Page<Question> paging;
+        if(StringUtils.hasText(kw)){
+             paging = this.questionService.getList(page, kw);
+        }else{
+            paging = this.questionService.getList(page);
+        }
         model.addAttribute("paging",paging);
         return "question_list";
     }

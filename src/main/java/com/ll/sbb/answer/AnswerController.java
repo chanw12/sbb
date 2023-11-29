@@ -7,6 +7,9 @@ import com.ll.sbb.user.UserService;
 import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -36,6 +39,8 @@ public class AnswerController {
         System.out.println(bindingResult.toString());
         if(bindingResult.hasErrors()){
             model.addAttribute("question",question);
+            Page<Answer> paging = answerService.getList(0,question.getId());
+            model.addAttribute("paging",paging);
             return "question_detail";
         }
         Answer answer = this.answerService.create(question, answerForm.getContent(), siteUser);

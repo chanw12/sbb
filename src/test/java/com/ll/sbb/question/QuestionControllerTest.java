@@ -1,6 +1,7 @@
 package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
+import com.ll.sbb.answer.AnswerService;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
 import jakarta.transaction.Transactional;
@@ -58,6 +59,9 @@ class QuestionControllerTest {
 
     @MockBean
     QuestionService questionService;
+
+    @MockBean
+    AnswerService answerService;
     @BeforeEach
     void settup(){
         userService.create("chan","wooju3434@naver.com","1234");
@@ -85,8 +89,9 @@ class QuestionControllerTest {
 
         // questionService의 getQuestion 메서드가 호출될 때 가상의 Question을 반환하도록 설정
         when(questionService.getQuestion(questionId)).thenReturn(mockQuestion);
+        Pageable pageable = PageRequest.of(0,5);
 
-
+        when(answerService.getList(5,1)).thenReturn(new PageImpl<>(new ArrayList<>(),pageable,10));
 
         // MockMvc를 사용하여 GET 요청을 보냄
         mockMvc.perform(MockMvcRequestBuilders.get("/question/detail/{id}", questionId))

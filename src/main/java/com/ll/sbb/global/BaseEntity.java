@@ -1,9 +1,6 @@
 package com.ll.sbb.global;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @SuperBuilder
 @NoArgsConstructor(access = PROTECTED)
 @Getter
+@Setter
 @EqualsAndHashCode
 @ToString
 public class BaseEntity {
@@ -30,6 +28,7 @@ public class BaseEntity {
     @CreatedDate
     private LocalDateTime createDate;
     @LastModifiedDate
-    @Setter
     private LocalDateTime modifyDate;
+    @Column(columnDefinition = "TEXT")
+    private String content;
 }

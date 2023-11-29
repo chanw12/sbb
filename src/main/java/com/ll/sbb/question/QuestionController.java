@@ -1,5 +1,6 @@
 package com.ll.sbb.question;
 
+import com.ll.sbb.answer.Answer;
 import com.ll.sbb.answer.AnswerForm;
 import com.ll.sbb.answer.AnswerService;
 import com.ll.sbb.user.SiteUser;
@@ -40,16 +41,6 @@ public class QuestionController {
     public String root(){
         return "redirect:/question/list";
     }
-
-    @GetMapping("/detail/{id}")
-    public String detail(AnswerForm answerForm,Model model, @PathVariable("id") Integer id ){
-        Question question = questionService.getQuestion(id);
-        model.addAttribute("question",question);
-        questionService.getList(0);
-        return "question_detail";
-    }
-
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
     public String create(QuestionForm questionForm){
@@ -69,12 +60,22 @@ public class QuestionController {
     }
 
     @GetMapping("/list")
-    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page,@RequestParam(value = "kw") String kw){
-        Page<Question> paging;
-        paging = this.questionService.getList(page, kw);
+    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page,@RequestParam(value = "kw",defaultValue = "") String kw){
+        Page<Question> paging= this.questionService.getList(page, kw);
         model.addAttribute("paging",paging);
         model.addAttribute("kw", kw);
         return "question_list";
+    }
+
+
+    @GetMapping("/detail/{id}")
+    public String detail(Model model, @PathVariable("id") Integer id,AnswerForm answerForm
+            ,@RequestParam(value = "page",defaultValue = "0") int page){
+        Question question = questionService.getQuestion(id);
+        model.addAttribute("question",question);
+        Page<Answer> paging = answerService.getList(page,question.getId());
+        model.addAttribute("paging",paging);
+        return "question_detail";
     }
 
     @PreAuthorize("isAuthenticated()")

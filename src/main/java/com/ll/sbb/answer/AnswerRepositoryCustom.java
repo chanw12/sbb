@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface AnswerRepositoryCustom {
-    Page<Answer> findAll(Pageable pageable);
+    Page<Answer> findAll(Pageable pageable,int questionid);
 }

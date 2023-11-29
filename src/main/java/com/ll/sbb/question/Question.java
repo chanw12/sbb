@@ -19,14 +19,10 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class Question extends BaseEntity {
 
-
     @Column(length = 200)
     private String subject;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
-    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "question",cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 
     @ManyToOne

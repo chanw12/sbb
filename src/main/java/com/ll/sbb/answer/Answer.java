@@ -17,8 +17,6 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class Answer extends BaseEntity {
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
 
     @ManyToOne
     private Question question;

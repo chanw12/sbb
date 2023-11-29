@@ -19,10 +19,11 @@ public class AnswerRepositoryImpl implements AnswerRepositoryCustom{
     }
 
     @Override
-    public Page<Answer> findAll(Pageable pageable) {
+    public Page<Answer> findAll(Pageable pageable,int questionid) {
         QAnswer answer = QAnswer.answer;
         List<Answer> answers = jpaQueryFactory
                 .selectFrom(answer)
+                .where(answer.question.id.eq(questionid))
                 .offset(pageable.getOffset())
                 .orderBy(answer.createDate.desc())
                 .limit(pageable.getPageSize())
@@ -30,6 +31,7 @@ public class AnswerRepositoryImpl implements AnswerRepositoryCustom{
 
         long totalCount = this.jpaQueryFactory
                 .selectFrom(answer)
+                .where(answer.question.id.eq(questionid))
                 .fetch().size();
     return new PageImpl<>(answers,pageable,totalCount);
     }

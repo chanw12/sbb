@@ -42,9 +42,9 @@ public class AnswerService {
         }
     }
     @Transactional
-    public Page<Answer> getList(int page){
-        Pageable pageable = PageRequest.of(page,10);
-        return this.answerRepository.findAll(pageable);
+    public Page<Answer> getList(int page,Integer questionid){
+        Pageable pageable = PageRequest.of(page,5);
+        return this.answerRepository.findAll(pageable,questionid);
     }
 
     @Transactional

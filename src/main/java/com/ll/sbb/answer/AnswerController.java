@@ -4,6 +4,7 @@ import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
+import groovy.util.logging.Slf4j;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,11 @@ public class AnswerController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Integer id
-            , @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal)
+            ,@Valid AnswerForm answerForm,BindingResult bindingResult, Principal principal)
     {
         Question question = questionService.getQuestion(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
+        System.out.println(bindingResult.toString());
         if(bindingResult.hasErrors()){
             model.addAttribute("question",question);
             return "question_detail";

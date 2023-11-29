@@ -1,9 +1,11 @@
 package com.ll.sbb.question;
 
 import com.ll.sbb.answer.AnswerForm;
+import com.ll.sbb.answer.AnswerService;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 import org.codehaus.groovy.util.StringUtil;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
     private final UserService userService;
+    private final AnswerService answerService;
 //    @GetMapping("/list")
 //    public String list(Model model){
 //        List<Question> questionList = this.questionService.getList();
@@ -42,6 +45,7 @@ public class QuestionController {
     public String detail(AnswerForm answerForm,Model model, @PathVariable("id") Integer id ){
         Question question = questionService.getQuestion(id);
         model.addAttribute("question",question);
+        questionService.getList(0);
         return "question_detail";
     }
 
@@ -65,14 +69,11 @@ public class QuestionController {
     }
 
     @GetMapping("/list")
-    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page,@RequestParam(value = "kw",defaultValue = "") String kw){
+    public String list(Model model,@RequestParam(value = "page",defaultValue = "0") int page,@RequestParam(value = "kw") String kw){
         Page<Question> paging;
-        if(StringUtils.hasText(kw)){
-             paging = this.questionService.getList(page, kw);
-        }else{
-            paging = this.questionService.getList(page);
-        }
+        paging = this.questionService.getList(page, kw);
         model.addAttribute("paging",paging);
+        model.addAttribute("kw", kw);
         return "question_list";
     }
 

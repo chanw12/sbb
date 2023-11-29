@@ -4,10 +4,17 @@ import com.ll.sbb.global.exception.DataNotFoundException;
 import com.ll.sbb.question.Question;
 import com.ll.sbb.user.SiteUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,6 +40,11 @@ public class AnswerService {
         } else {
             throw new DataNotFoundException("answer not found");
         }
+    }
+    @Transactional
+    public Page<Answer> getList(int page){
+        Pageable pageable = PageRequest.of(page,10);
+        return this.answerRepository.findAll(pageable);
     }
 
     @Transactional

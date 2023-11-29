@@ -37,7 +37,7 @@ class AnswerServiceTest {
 
     @Test
     void create() {
-        Question question = new Question();
+        Question question = Question.builder().build();
         String answerContent = "This is an answer content";
         answerService.create(question, answerContent,new SiteUser());
 
@@ -57,8 +57,7 @@ class AnswerServiceTest {
     }
     @Test
     void getAnswer() {
-       Answer answer= new Answer();
-       answer.setId(1);
+       Answer answer= Answer.builder().id(1).build();
        when(answerRepository.findById(any(Integer.class))).thenReturn(Optional.of(answer));
 
 
@@ -85,13 +84,15 @@ class AnswerServiceTest {
         assertNotNull(answer.getModifyDate());
         assertEquals(newContent, answer.getContent());
         verifyNoMoreInteractions(answerRepository);
+
+
     }
 
     @Test
     @DisplayName("답변 삭제 서비스 확인")
     void delete(){
-        Answer answer = new Answer();
-        answer.setId(1);
+        Answer answer= Answer.builder().id(1).build();
+
 
         // When
         doNothing().when(answerRepository).delete(answer);

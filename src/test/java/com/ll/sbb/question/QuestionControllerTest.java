@@ -80,11 +80,9 @@ class QuestionControllerTest {
     @Test
     void detail() throws Exception {
         Integer questionId = 1;
-        Question mockQuestion = new Question();
-        mockQuestion.setId(questionId);
-        mockQuestion.setSubject("Test Subject");
-        mockQuestion.setAnswerList(new ArrayList<>());
-        mockQuestion.setVoter(new HashSet<>());
+        Question mockQuestion = Question.builder().id(questionId).subject("Test Subject")
+                .answerList(new ArrayList<>()).voter(new HashSet<>()).build();
+
         // questionService의 getQuestion 메서드가 호출될 때 가상의 Question을 반환하도록 설정
         when(questionService.getQuestion(questionId)).thenReturn(mockQuestion);
 

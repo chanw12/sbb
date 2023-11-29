@@ -4,6 +4,7 @@ import com.ll.sbb.question.Question;
 import com.ll.sbb.question.QuestionService;
 import com.ll.sbb.user.SiteUser;
 import com.ll.sbb.user.UserService;
+import groovy.transform.EqualsAndHashCode;
 import jakarta.transaction.Transactional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,7 @@ import java.security.Principal;
 
 import static org.mockito.Mockito.*;
 
+@EqualsAndHashCode
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -52,15 +54,13 @@ public class AnswerControllerTest {
     @DisplayName("답변을 생성하는 create요청에 대한 테스트")
     @WithMockUser(username = "chan", password = "1234", roles = "USER")
     void test1() throws Exception{
-        Integer questionId = 1;
-        Question question= new Question();
-        question.setId(questionId);
+        int questionId = 1;
+        Question question= Question.builder().id(questionId).build();
         SiteUser siteUser = new SiteUser();
         String content = "This is an answer content";
         Principal principal = Mockito.mock(Principal.class);
-        Answer answer = new Answer();
-        answer.setQuestion(question);
-        answer.setId(1);
+        Answer answer = Answer.builder().id(1).question(question).build();
+
 
         when(principal.getName()).thenReturn("chan");
         when(userService.getUser(principal.getName())).thenReturn(siteUser);
@@ -90,8 +90,8 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("chan");
         answer.setAuthor(siteUser);
-        Question question = new Question();
-        question.setId(1);
+        Question question = Question.builder().id(1).build();;
+
         answer.setQuestion(question);
         when(answerService.getAnswer(1)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/modify/{id}",1).param("content",content)
@@ -113,8 +113,8 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("chan");
         answer.setAuthor(siteUser);
-        Question question = new Question();
-        question.setId(1);
+        Question question = Question.builder().id(1).build();;
+
         answer.setQuestion(question);
         when(answerService.getAnswer(1)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/modify/{id}",1).param("content",content)
@@ -136,8 +136,8 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("chan123");
         answer.setAuthor(siteUser);
-        Question question = new Question();
-        question.setId(1);
+        Question question = Question.builder().id(1).build();;
+
         answer.setQuestion(question);
         when(answerService.getAnswer(1)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.post("/answer/modify/{id}",1).param("content",content)
@@ -155,8 +155,7 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("chan");
         answer.setAuthor(siteUser);
-        Question question = new Question();
-        question.setId(1);
+        Question question = Question.builder().id(1).build();;
         answer.setQuestion(question);
         when(answerService.getAnswer(1)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.get("/answer/delete/{id}",1)
@@ -176,8 +175,7 @@ public class AnswerControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("chan123");
         answer.setAuthor(siteUser);
-        Question question = new Question();
-        question.setId(1);
+        Question question = Question.builder().id(1).build();
         answer.setQuestion(question);
         when(answerService.getAnswer(1)).thenReturn(answer);
         mockMvc.perform(MockMvcRequestBuilders.get("/answer/delete/{id}",1)
@@ -189,11 +187,10 @@ public class AnswerControllerTest {
     @DisplayName("/answer/vote/{id}로 요청시 추천 증가 ")
     @WithMockUser(username = "chan",password = "1234",roles = "USER")
     void vote() throws Exception{
-        Answer answer = new Answer();
-        Question question = new Question();
-        question.setId(1);
+        Answer answer = Answer.builder().id(1).build();
+        Question question = Question.builder()
+                        .id(1).build();
         answer.setQuestion(question);
-        answer.setId(1);
         SiteUser siteUser = new SiteUser();
         Principal principal = Mockito.mock(Principal.class);
         Mockito.when(principal.getName()).thenReturn("chan");

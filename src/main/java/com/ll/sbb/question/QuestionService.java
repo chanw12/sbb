@@ -36,11 +36,8 @@ public class QuestionService {
     }
 
     public void create(String subject, String content, SiteUser siteUser){
-        Question question = new Question();
-        question.setSubject(subject);
-        question.setContent(content);
-        question.setCreateDate(LocalDateTime.now());
-        question.setAuthor(siteUser);
+        Question question = Question.builder()
+                        .subject(subject).content(content).createDate(LocalDateTime.now()).author(siteUser).build();
         questionRepository.save(question);
     }
 

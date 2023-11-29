@@ -37,17 +37,13 @@ class QuestionServiceTest {
     @Test
     void test1(){
         //given
-        Question question1 = new Question();
-        question1.setId(1);
-        question1.setContent("chan");
-        question1.setSubject("Subject 1");
-        question1.setCreateDate(LocalDateTime.now());
+        Question question1 = Question.builder().id(1).content("chan")
+                .subject("Subject 1").createDate(LocalDateTime.now()).build();
 
-        Question question2 = new Question();
-        question2.setId(1);
-        question2.setContent("chan");
-        question2.setSubject("Subject 2");
-        question2.setCreateDate(LocalDateTime.now());
+
+        Question question2 = Question.builder().id(2).content("chan")
+                .subject("Subject 2").createDate(LocalDateTime.now()).build();
+
         when(questionRepository.findAll()).thenReturn(Arrays.asList(question1, question2));
 
         //when
@@ -65,11 +61,9 @@ class QuestionServiceTest {
     void test2() {
 
         //given
-        Question question1 = new Question();
-        question1.setId(1);
-        question1.setContent("chan");
-        question1.setSubject("Subject 1");
-        question1.setCreateDate(LocalDateTime.now());
+        Question question1 = Question.builder().id(1).content("chan")
+                .subject("Subject 1").createDate(LocalDateTime.now()).build();
+
         when(questionRepository.findById(1)).thenReturn(Optional.of(question1));
 
         //when
@@ -111,11 +105,8 @@ class QuestionServiceTest {
     void getList() {
         Pageable pageable = PageRequest.of(0,10);
         List<Question> questions = new ArrayList<>();
-        Question question = new Question();
-        question.setId(1);
-        question.setContent("123");
-        question.setSubject("12333");
-        question.setCreateDate(LocalDateTime.now());
+        Question question = Question.builder().id(1).content("123")
+                .subject("12333").createDate(LocalDateTime.now()).build();
 
         questions.add(question);
 
@@ -150,8 +141,7 @@ class QuestionServiceTest {
     @Test
     @DisplayName("질문 삭제 서비스 확인")
     void delete(){
-        Question questionToDelete = new Question();
-        questionToDelete.setId(1);
+        Question questionToDelete = Question.builder().id(1).build();
 
         // When
         doNothing().when(questionRepository).delete(questionToDelete);
